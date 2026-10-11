@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdmissionEnquiry {
+  id             String   @id @default(cuid())
+  enquiryNumber  String   @unique
+  studentName    String
+  fatherName     String
+  studentAge     Int
+  contactNumber  String
+  address        String
+  admissionClass String
+  parentEmail    String?
+  message        String?
+  status         String   @default("NEW")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([admissionClass])
+  @@index([createdAt])
+  @@index([contactNumber])
+  @@index([parentEmail])
+}
+
+model SiteSettings {
+  id        String @id @default("default")
+  schoolName String @default("Sunrise Public School")
+  tagline   String @default("Empowering Young Minds for a Brighter Tomorrow")
+  address   String @default("123 Education Lane, Knowledge City, State — PIN 110001")
+  phone     String @default("+91 98765 43210")
+  email     String @default("info@sunrisepublicschool.example.com")
+  hours     String @default("Mon – Sat: 8:00 AM – 2:00 PM")
+  facebook  String @default("")
+  instagram String @default("")
+  youtube   String @default("")
+  updatedAt DateTime @updatedAt
+}
+
+model HomeContent {
+  id              String  @id @default("home")
+  heroTitle       String  @default("Building Bright Futures Through Quality Education")
+  heroSubtitle    String  @default("Discover a learning environment where knowledge, creativity, discipline, and character development come together to help every student grow.")
+  welcomeTitle    String  @default("Welcome to Sunrise Public School")
+  welcomeText     String  @default("We are committed to providing quality education that nurtures curiosity, confidence and character. Placeholder — replace with real school information.")
+  ctaTitle        String  @default("Give Your Child a Strong Foundation for the Future")
+  ctaSubtitle     String  @default("Admissions are open. Enquire today and our team will guide you through the next steps.")
+  heroImageUrl    String?
+  welcomeImageUrl String?
+  updatedAt       DateTime @updatedAt
+}
+
+model AboutContent {
+  id               String @id @default("about")
+  introTitle       String @default("About Our School")
+  introText        String @default("Learn about our school's history, mission, vision and values. Placeholder content — replace with real school information.")
+  historyText      String @default("Our school was founded with a vision to provide holistic education. Placeholder — add real history here.")
+  mission          String @default("Nurture curious, confident and compassionate learners.")
+  vision           String @default("Be a trusted centre of holistic education.")
+  principalName    String @default("")
+  principalTitle   String @default("Principal")
+  principalMessage String @default("")
+  principalImageUrl String?
+  valuesJson       String @default("[\"Discipline\",\"Integrity\",\"Respect\",\"Creativity\",\"Responsibility\",\"Lifelong Learning\"]")
+  updatedAt        DateTime @updatedAt
+}
+
+model HomeGalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String   @default("")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model AchievementItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   @default("Academic Excellence")
+  dateLabel   String   @default("")
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
