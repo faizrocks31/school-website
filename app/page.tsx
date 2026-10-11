@@ -1,11 +1,19 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function HomePage() {
-  const [home, gallery] = await Promise.all([
-    prisma.homeContent.findUnique({ where: { id: "home" } }),
-    prisma.homeGalleryImage.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
-  ]);
+  let home: Awaited<ReturnType<typeof prisma.homeContent.findUnique>> = null;
+  let gallery: Awaited<ReturnType<typeof prisma.homeGalleryImage.findMany>> = [];
+  try {
+    [home, gallery] = await Promise.all([
+      prisma.homeContent.findUnique({ where: { id: "home" } }),
+      prisma.homeGalleryImage.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
+    ]);
+  } catch {
+    // DB not yet migrated on first deploy — fall back to defaults
+  }
 
   const heroTitle = home?.heroTitle ?? "Building Bright Futures Through Quality Education";
   const heroSubtitle = home?.heroSubtitle ?? "Discover a learning environment where knowledge, creativity, discipline, and character development come together to help every student grow.";

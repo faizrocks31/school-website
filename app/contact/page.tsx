@@ -1,9 +1,12 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { siteConfig } from "@/lib/site-config";
 
 export default async function ContactPage(){
-  const settings = await prisma.siteSettings.findUnique({ where:{id:"default"}});
+  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
+  try { settings = await prisma.siteSettings.findUnique({ where:{id:"default"}}); } catch {}
   const address = settings?.address ?? siteConfig.contact.address;
   const phone = settings?.phone ?? siteConfig.contact.phone;
   const email = settings?.email ?? siteConfig.contact.email;

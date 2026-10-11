@@ -1,12 +1,19 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function AdminDashboard(){
-  const [enquiries, achievements, gallery] = await Promise.all([
-    prisma.admissionEnquiry.count(),
-    prisma.achievementItem.count(),
-    prisma.homeGalleryImage.count(),
-  ]);
+  let enquiries = 0, achievements = 0, gallery = 0;
+  try {
+    [enquiries, achievements, gallery] = await Promise.all([
+      prisma.admissionEnquiry.count(),
+      prisma.achievementItem.count(),
+      prisma.homeGalleryImage.count(),
+    ]);
+  } catch {
+    // DB not yet migrated — show 0 until `prisma db push` is run
+  }
   const cards = [
     { label:"Enquiries", value: enquiries, href:"/admin/enquiries" },
     { label:"Achievements", value: achievements, href:"/admin/achievements" },

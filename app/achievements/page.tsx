@@ -1,8 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function AchievementsPage(){
-  const items = await prisma.achievementItem.findMany({ orderBy:{createdAt:"desc"}});
+  let items: Awaited<ReturnType<typeof prisma.achievementItem.findMany>> = [];
+  try { items = await prisma.achievementItem.findMany({ orderBy:{createdAt:"desc"}}); } catch {}
   const cats = [...new Set(items.map(i=>i.category))];
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">

@@ -1,8 +1,12 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function AboutPage(){
-  const about = await prisma.aboutContent.findUnique({ where: { id: "about" } });
+  let about: Awaited<ReturnType<typeof prisma.aboutContent.findUnique>> = null;
+  try { about = await prisma.aboutContent.findUnique({ where: { id: "about" } }); } catch {}
+
   const introTitle = about?.introTitle ?? "About Our School";
   const introText = about?.introText ?? "Learn about our school's history, mission, vision and values. Placeholder content — replace with real school information via Admin → About.";
   const historyText = about?.historyText ?? "Our school was founded with a vision to provide holistic education. Placeholder — add real history via Admin.";
