@@ -2,6 +2,7 @@ export const siteConfig = {
   name: "Sunrise Public School",
   tagline: "Empowering Young Minds for a Brighter Tomorrow",
   description: "A modern school website — placeholder content until real school information is supplied.",
+  logoUrl: "",
   contact: {
     address: "123 Education Lane, Knowledge City, State — PIN 110001",
     phone: "+91 98765 43210",

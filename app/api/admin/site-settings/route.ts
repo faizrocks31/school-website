@@ -22,8 +22,8 @@ export async function PUT(req: NextRequest) {
   const d = parsed.data;
   const row = await prisma.siteSettings.upsert({
     where: { id:"default" },
-    create: { id:"default", schoolName:d.schoolName, tagline:d.tagline, address:d.address, phone:d.phone, email:d.email, hours:d.hours, facebook:d.facebook||"", instagram:d.instagram||"", youtube:d.youtube||"" },
-    update: { schoolName:d.schoolName, tagline:d.tagline, address:d.address, phone:d.phone, email:d.email, hours:d.hours, facebook:d.facebook||"", instagram:d.instagram||"", youtube:d.youtube||"" },
+    create: { id:"default", schoolName:d.schoolName, tagline:d.tagline, logoUrl:d.logoUrl||null, address:d.address, phone:d.phone, email:d.email, hours:d.hours, facebook:d.facebook||"", instagram:d.instagram||"", youtube:d.youtube||"" },
+    update: { schoolName:d.schoolName, tagline:d.tagline, logoUrl:d.logoUrl||null, address:d.address, phone:d.phone, email:d.email, hours:d.hours, facebook:d.facebook||"", instagram:d.instagram||"", youtube:d.youtube||"" },
   });
   return NextResponse.json(row);
 }

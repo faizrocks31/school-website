@@ -6,7 +6,7 @@ export async function getSiteSettings() {
   const row = await prisma.siteSettings.findUnique({ where: { id: "default" } });
   if (!row) return siteConfig;
   return {
-    name: row.schoolName, tagline: row.tagline,
+    name: row.schoolName, tagline: row.tagline, logoUrl: row.logoUrl ?? "",
     contact: { address: row.address, phone: row.phone, email: row.email, hours: row.hours },
     social: { facebook: row.facebook, instagram: row.instagram, youtube: row.youtube },
   };

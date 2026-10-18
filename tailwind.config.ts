@@ -14,7 +14,10 @@ const config: Config = {
         success: "#16A34A",
         error: "#DC2626",
       },
-      fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+      fontFamily: {
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Outfit", "system-ui", "sans-serif"],
+      },
       borderRadius: { xl: "1rem", "2xl": "1.25rem" },
     },
   },

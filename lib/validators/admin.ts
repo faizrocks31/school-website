@@ -2,6 +2,7 @@ import { z } from "zod";
 export const siteSettingsSchema = z.object({
   schoolName: z.string().trim().min(2).max(120),
   tagline: z.string().trim().max(200),
+  logoUrl: z.string().trim().max(1000).optional().or(z.literal("")),
   address: z.string().trim().min(5).max(500),
   phone: z.string().trim().min(8).max(30),
   email: z.string().trim().email().max(254),

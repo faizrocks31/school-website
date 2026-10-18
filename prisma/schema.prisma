@@ -33,6 +33,7 @@ model SiteSettings {
   id         String   @id @default("default")
   schoolName String   @default("Sunrise Public School")
   tagline    String   @default("Empowering Young Minds for a Brighter Tomorrow")
+  logoUrl    String?
   address    String   @default("123 Education Lane, Knowledge City, State — PIN 110001")
   phone      String   @default("+91 98765 43210")
   email      String   @default("info@sunrisepublicschool.example.com")
