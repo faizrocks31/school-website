@@ -28,7 +28,7 @@ git push -u origin main
 
 ### Step 2 — Create a free Postgres DB (required for enquiries on Vercel)
 
-SQLite (`dev.db`) works locally, but Vercel's filesystem is ephemeral — enquiries would be lost on every deploy. Use a **free Postgres**:
+Vercel's filesystem is ephemeral, so enquiries would be lost on every deploy. Use a **free Postgres** — the Prisma schema is already set to `provider = "postgresql"`, so no code change is needed:
 
 **Pick one (all free):**
 - **Neon** — https://neon.tech — Create project → Copy connection string
@@ -69,15 +69,39 @@ vercel --prod         # follow prompts: link to project, set env vars when asked
 # when it asks for ADMIN_TOKEN, enter your admin password
 ```
 
-### Step 4 — Test live site
+### Step 4 — Make the URL public (do not skip)
+
+By default Vercel may leave **Deployment Protection** on, which makes every URL — pages *and* `/api/*` — redirect to a Vercel login. The site then looks broken and the enquiry form fails with a generic error.
+
+1. Vercel Dashboard → your project → **Settings → Deployment Protection**
+2. Set the scope to **Standard Protection** (protects preview URLs, leaves the production domain public)
+   - **Disabled / None** also works if you don't need preview protection
+   - **All Deployments** is what breaks a shareable link — it protects the production domain too
+3. **Save**
+
+Verify — this must print `200`, not `302`:
+```powershell
+curl.exe -sI https://your-project.vercel.app/ | findstr /R "^HTTP"
+```
+If it prints `302` with a `Location:` pointing at `vercel.com/sso-api`, protection is still on.
+
+Use the **production domain** from Settings → Domains (e.g. `https://your-project.vercel.app`). Preview URLs of the form `your-project-abc123-you.vercel.app` stay protected under Standard Protection — never share those.
+
+### Step 5 — Test live site
 - `https://your-url.vercel.app/` — home
-- `https://your-url.vercel.app/enquiry` — submit a test enquiry
+- `https://your-url.vercel.app/enquiry` — submit a test enquiry, expect an `ENQ-YYYYMMDD-XXXX` reference
 - `https://your-url.vercel.app/admin` — login with `ADMIN_TOKEN` → manage content
 
+Sanity-check the enquiry API from DevTools console on the live site:
+```js
+fetch("/api/v1/admission-enquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({studentName:"Test Student",fatherName:"Test Father",studentAge:6,contactNumber:"9876543210",address:"House 12, Knowledge City, State 110001",admissionClass:"Class 1",parentEmail:"test-enquiry@example.com",consent:true})}).then(async r=>({status:r.status,body:await r.json().catch(()=>({}))})).then(console.log)
+```
+`201` = saved · `409` = duplicate or per-contact limit reached · `422` = validation · `503` = DB not migrated · `429` = rate limited.
+
 ### Free domain — custom name
-- Vercel auto-gives `*.vercel.app` free forever
+- Vercel auto-gives `*.vercel.app` free forever — this is the realistic free option
 - For `yourschool.vercel.app` — Vercel Dashboard → Project → Settings → Domains → Edit
-- Want a real `.com` free? Use **Freenom** (free `.tk/.ml`) + add to Vercel → Domains → Add
+- **Freenom no longer issues free `.tk/.ml` domains** (it stopped in 2023) — ignore any older advice about it
 
 ### Auto-updates
 Every `git push` to `main` auto-redeploys. Edit content via `/admin` on the live site — no redeploy needed for content changes!
@@ -103,23 +127,18 @@ render.com → New → Web Service → Connect GitHub → Build `npm run build` 
 
 ```powershell
 # Before pushing, make sure this passes:
-npm run build   # must show 29/29 pages, no errors
-
-# For production build, change prisma provider if using Postgres:
-# In prisma/schema.prisma, change:
-#   provider = "sqlite"  →  provider = "postgresql"
-# Then:
-npx prisma generate
-npm run build
+npm run build   # must compile with no errors
 ```
 
-**.env for local (SQLite):**
+`prisma/schema.prisma` is already `provider = "postgresql"` — the same Neon/Supabase database serves local dev and production, so no provider switch is needed.
+
+**.env for local (gitignored — use the Postgres URL, NOT sqlite):**
 ```
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://...same database as production..."
 ADMIN_TOKEN="admin123"
 ```
 
-**Env vars on Vercel (Postgres):**
+**Env vars on Vercel (Settings → Environment Variables):**
 ```
 DATABASE_URL="postgresql://..."
 ADMIN_TOKEN="your-strong-password"
@@ -131,11 +150,14 @@ ADMIN_TOKEN="your-strong-password"
 
 | Issue | Fix |
 |-------|-----|
+| Live URL asks for a Vercel login | Deployment Protection set to **All Deployments** → switch scope to **Standard Protection** (or Disabled). See Step 4 |
 | `500` on live site | Check Vercel → Deployments → Logs. Usually `DATABASE_URL` missing or DB not migrated — run `npx prisma db push` with prod URL |
+| `503` on live site (enquiry) | Tables missing in prod DB — run `npx prisma db push` with the prod `DATABASE_URL` |
 | Enquiries lost after redeploy | You used SQLite on Vercel — switch to Neon/Supabase Postgres |
-| Build fails: `EPERM query_engine` | Local only — `Remove-Item -Recurse -Force node_modules\.prisma; npx prisma generate; npm run build` |
+| `P1012: URL must start with postgresql://` | `.env` reverted to `file:./dev.db` — replace with the Postgres URL |
+| Build fails: `EPERM query_engine` | Local only — `taskkill /F /IM node.exe; Remove-Item -Recurse -Force node_modules\.prisma; npx prisma generate` |
 | `ADMIN_TOKEN` not working | Set it in Vercel → Settings → Environment Variables → Redeploy |
-| Want to keep SQLite free? | Use **Turso** (libSQL) — free, works like SQLite in the cloud. Ask me and I'll switch the adapter |
+| Test rows appear on the live site | Dev and prod share one database — delete test enquiries from `/admin/enquiries` |
 
 ---
 
