@@ -2,6 +2,15 @@
 
 > **Sunrise Public School** — Next.js 14 on Vercel (free `vercel.app` domain)
 
+## Live now
+
+| URL | Status |
+|-----|--------|
+| **https://school-website-4vyz.vercel.app** | **Public — share this one** |
+| https://school-website-me-ebed.vercel.app | Protected by Vercel login (see the note below) |
+
+> **This repo deploys to two Vercel projects.** Every `git push` to `main` builds both. The `school-website-4vyz` project's domain is public; the `school-website` project (`me-ebed`) has Deployment Protection scope set to **All Deployments**, so its domain redirects to a Vercel login. To unblock it, set that project's scope to **Standard Protection** (which excludes production domains) or **Disabled**.
+
 ---
 
 ## Option A — Vercel (Recommended, 5 minutes)
