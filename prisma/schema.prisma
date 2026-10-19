@@ -31,13 +31,15 @@ model AdmissionEnquiry {
 
 model SiteSettings {
   id         String   @id @default("default")
-  schoolName String   @default("Sunrise Public School")
+  schoolName String   @default("Your School Name")
   tagline    String   @default("Empowering Young Minds for a Brighter Tomorrow")
   logoUrl    String?
-  address    String   @default("123 Education Lane, Knowledge City, State — PIN 110001")
-  phone      String   @default("+91 98765 43210")
-  email      String   @default("info@sunrisepublicschool.example.com")
-  hours      String   @default("Mon – Sat: 8:00 AM – 2:00 PM")
+  theme      String   @default("classic")
+  address    String   @default("School address — set this in Admin → Site Settings")
+  mapEmbedUrl String  @default("")
+  phone      String   @default("+91 00000 00000")
+  email      String   @default("info@example.com")
+  hours      String   @default("Office hours — set this in Admin → Site Settings")
   facebook   String   @default("")
   instagram  String   @default("")
   youtube    String   @default("")
@@ -48,7 +50,7 @@ model HomeContent {
   id              String   @id @default("home")
   heroTitle       String   @default("Building Bright Futures Through Quality Education")
   heroSubtitle    String   @default("Discover a learning environment where knowledge, creativity, discipline, and character development come together to help every student grow.")
-  welcomeTitle    String   @default("Welcome to Sunrise Public School")
+  welcomeTitle    String   @default("Welcome to Our School")
   welcomeText     String   @default("We are committed to providing quality education that nurtures curiosity, confidence and character. Placeholder — replace with real school information.")
   ctaTitle        String   @default("Give Your Child a Strong Foundation for the Future")
   ctaSubtitle     String   @default("Admissions are open. Enquire today and our team will guide you through the next steps.")
@@ -80,6 +82,24 @@ model HomeGalleryImage {
   createdAt DateTime @default(now())
 }
 
+/// A slide in the homepage hero carousel. The homepage falls back to its plain
+/// static hero whenever this table is empty, so a school that never adds a
+/// slide sees no change at all.
+model HeroSlide {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  title     String   @default("")
+  subtitle  String   @default("")
+  ctaLabel  String   @default("")
+  ctaHref   String   @default("")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
 model AchievementItem {
   id          String   @id @default(cuid())
   title       String
@@ -89,4 +109,18 @@ model AchievementItem {
   imageUrl    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ContactMessage {
+  id            String   @id @default(cuid())
+  name          String
+  contactNumber String
+  message       String
+  status        String   @default("NEW")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([contactNumber])
 }

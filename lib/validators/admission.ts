@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { ADMISSION_CLASSES, AGE_RANGE } from "@/lib/site-config";
+import { mobileNumberField } from "@/lib/phone";
 
 const nameRegex = new RegExp("^[\\p{L}\\p{M} .'\\-]+$", "u");
-const phoneRegex = /^\+?[0-9\s\-()]{8,20}$/;
 
 export const admissionEnquirySchema = z.object({
   studentName: z.string().trim().min(2, "Please enter the student's name.").max(120)
@@ -10,10 +10,7 @@ export const admissionEnquirySchema = z.object({
   fatherName: z.string().trim().min(2, "Please enter the father's name.").max(120)
     .regex(nameRegex, "Name may contain letters, spaces, apostrophes and hyphens only."),
   studentAge: z.coerce.number().int("Please enter a valid age.").min(AGE_RANGE.min, `Age must be at least ${AGE_RANGE.min}.`).max(AGE_RANGE.max, `Age must be at most ${AGE_RANGE.max}.`),
-  contactNumber: z.string().trim().min(8, "Please enter a valid contact number.").max(20)
-    .regex(phoneRegex, "Please enter a valid contact number.")
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .refine((v: string) => v.replace(/\D/g, "").length >= 10, "Please enter a valid contact number."),
+  contactNumber: mobileNumberField,
   address: z.string().trim().min(10, "Please enter the complete address.").max(1000),
   admissionClass: z.enum(ADMISSION_CLASSES as unknown as [string, ...string[]], { errorMap: () => ({ message: "Please select a class." }) }),
   parentEmail: z.string().trim().email("Please enter a valid email address.").max(254).optional().or(z.literal("")),

@@ -5,6 +5,7 @@ import { admissionEnquirySchema } from "@/lib/validators/admission";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 import { ENQUIRY_LIMITS } from "@/lib/site-config";
+import { MOBILE_REGEX, toNationalNumber } from "@/lib/phone";
 
 function genEnquiryNumber(): string {
   const d = new Date();
@@ -14,7 +15,6 @@ function genEnquiryNumber(): string {
 }
 
 function normalizePhone(v: string): string { return v.replace(/\D/g, ""); }
-
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rl = rateLimit(`enquiry:${ip}`);
@@ -38,7 +38,16 @@ export async function POST(req: NextRequest) {
   }
 
   const { studentName, fatherName, studentAge, contactNumber, address, admissionClass, parentEmail } = parsed.data;
-  const normalizedPhone = normalizePhone(contactNumber.trim());
+  // Defense in depth: never trust the client. Re-normalize and re-check the mobile
+  // number here even though the schema already does, so a schema change or a direct
+  // API call can't slip a malformed number into the database.
+  const normalizedPhone = toNationalNumber(contactNumber);
+  if (!MOBILE_REGEX.test(normalizedPhone)) {
+    return NextResponse.json(
+      { message: "Validation failed.", errors: { contactNumber: "Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9." } },
+      { status: 422 }
+    );
+  }
   const normalizedEmail = parentEmail?.trim().toLowerCase() || null;
   const normalizedStudentName = studentName.trim().toLowerCase();
 

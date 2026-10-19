@@ -1,6 +1,6 @@
 # School Website — Complete Command Guide
 
-> Project: **Sunrise Public School** — Next.js 14 + Prisma (SQLite) + Tailwind
+> Project: **School Website** — Next.js 14 + Prisma + Tailwind
 > Location: `C:\Users\hp\Documents\Claude Project\School Website`
 
 All commands from the **project folder**:

@@ -1,4 +1,4 @@
-# Sunrise Public School — Website
+# School Website
 
 Stack: Next.js 14 (App Router) + TypeScript + Tailwind + Prisma (SQLite for dev, Postgres-ready) + Zod + React Hook Form.
 

@@ -1,16 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{color-scheme:light}
+:root{
+  color-scheme:light;
+
+  /* Brand fallbacks. The root layout overrides these inline from the theme
+     saved in Admin → Theme; these values match the "Classic Navy" theme and
+     cover the first paint and any DB-less rendering. Space-separated RGB
+     channels so Tailwind opacity modifiers work. */
+  --brand-primary: 23 59 101;
+  --brand-secondary: 37 99 235;
+  --brand-accent: 244 185 66;
+}
 body{font-family:var(--font-sans),Inter,system-ui,sans-serif;background:#F8FAFC;color:#1E293B}
 
-/* Brand wordmark — display font, tight tracking, gradient-tinted for a polished look */
+/* Brand wordmark — display font, tight tracking, gradient-tinted for a polished look.
+   The gradient follows the active theme via the same custom properties. */
 .brand-name{
   font-family:var(--font-display),Outfit,system-ui,sans-serif;
   font-weight:800;
   letter-spacing:-0.02em;
   line-height:1.05;
-  background:linear-gradient(92deg,#173B65 0%,#2563EB 55%,#1D4ED8 100%);
+  background:linear-gradient(92deg,
+    rgb(var(--brand-primary)) 0%,
+    rgb(var(--brand-secondary)) 55%,
+    rgb(var(--brand-secondary)) 100%);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
@@ -20,3 +34,16 @@ body{font-family:var(--font-sans),Inter,system-ui,sans-serif;background:#F8FAFC;
   font-weight:700;
   letter-spacing:-0.01em;
 }
+
+/* Used by the carousel: the track scrolls (so touch swipe and keyboard arrows
+   work), but the native scrollbar would cut across the slides. The dots and
+   arrows provide the visible affordance instead. Keyboard users can still scroll
+   it with arrow keys, so hiding the bar does not remove the control. */
+.no-scrollbar{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.no-scrollbar::-webkit-scrollbar{
+  display:none;
+}
+

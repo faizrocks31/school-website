@@ -1,36 +1,45 @@
 import Link from "next/link";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { AdminLogoutButton } from "./logout-button";
 
+/**
+ * Admin shell.
+ *
+ * Deliberately has no navigation menu: every admin section is reachable from
+ * the dashboard's icon grid, and the single "Back to Dashboard" control below
+ * gets you home from any page. Adding a nav list back here would duplicate that
+ * grid and would need updating every time a section is added.
+ */
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b sticky top-0 z-30">
-        <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Link href="/admin" className="font-bold text-primary">Admin Panel</Link>
-            <nav className="hidden sm:flex items-center gap-1 text-sm">
-              <Link href="/admin" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Dashboard</Link>
-              <Link href="/admin/site" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Site Settings</Link>
-              <Link href="/admin/home" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Home</Link>
-              <Link href="/admin/about" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">About</Link>
-              <Link href="/admin/achievements" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Achievements</Link>
-              <Link href="/admin/gallery" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Gallery</Link>
-              <Link href="/admin/enquiries" className="px-3 py-1.5 rounded-lg hover:bg-slate-100">Enquiries</Link>
-            </nav>
+        <div className="mx-auto max-w-6xl px-4 py-2 min-h-14 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Back to the dashboard — the one way out of a section page. The
+                label shortens on narrow screens so the header never overflows. */}
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-medium text-text-main hover:bg-slate-100 hover:border-slate-300 transition motion-reduce:transition-none"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline whitespace-nowrap">Back to Dashboard</span>
+              <span className="sm:hidden whitespace-nowrap">Back</span>
+            </Link>
+            <span className="hidden lg:inline text-sm font-semibold text-primary truncate">Admin Panel</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Link href="/" className="text-sm text-text-muted hover:text-primary">View site</Link>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Link
+              href="/"
+              aria-label="View site"
+              title="View site"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-semibold text-text-main hover:bg-slate-100 hover:border-slate-300 transition motion-reduce:transition-none"
+            >
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline whitespace-nowrap">View site</span>
+            </Link>
             <AdminLogoutButton />
           </div>
-        </div>
-        <div className="sm:hidden border-t px-4 py-2 flex flex-wrap gap-1 text-sm">
-          <Link href="/admin" className="px-2 py-1 rounded-lg bg-slate-100">Dashboard</Link>
-          <Link href="/admin/site" className="px-2 py-1 rounded-lg bg-slate-100">Site</Link>
-          <Link href="/admin/home" className="px-2 py-1 rounded-lg bg-slate-100">Home</Link>
-          <Link href="/admin/about" className="px-2 py-1 rounded-lg bg-slate-100">About</Link>
-          <Link href="/admin/achievements" className="px-2 py-1 rounded-lg bg-slate-100">Achievements</Link>
-          <Link href="/admin/gallery" className="px-2 py-1 rounded-lg bg-slate-100">Gallery</Link>
-          <Link href="/admin/enquiries" className="px-2 py-1 rounded-lg bg-slate-100">Enquiries</Link>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>

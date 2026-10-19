@@ -1,0 +1,17 @@
+# Never upload secrets — Vercel injects env vars from project settings.
+.env
+.env*
+!.env.example
+
+# Local build output and logs
+.next
+node_modules
+*.log
+dev.log
+tsconfig.tsbuildinfo
+
+# Local debug/verification scripts (not part of the app)
+scripts/
+
+# Local-only source asset; the optimized webp in public/ is what the app uses.
+applyadmission.png

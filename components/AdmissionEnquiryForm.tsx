@@ -6,6 +6,8 @@ import Link from "next/link";
 import { admissionEnquirySchema, type AdmissionEnquiryInput } from "@/lib/validators/admission";
 import { ADMISSION_CLASSES } from "@/lib/site-config";
 import { Label, Input, Textarea, Select, FieldError } from "@/components/ui/Field";
+import { MobileInput, mobileRegisterProps } from "@/components/ui/MobileInput";
+import { ModernIcon } from "@/components/ui/ModernIcon";
 import { Button } from "@/components/ui/Button";
 
 export function AdmissionEnquiryForm() {
@@ -27,27 +29,29 @@ export function AdmissionEnquiryForm() {
       if (!res.ok) {
         if (json.errors) {
           const msgs = Object.values(json.errors as Record<string,string>).join(" ");
-          setServerError(msgs || json.message || "We could not submit your enquiry. Please try again.");
-        } else setServerError(json.message || "We could not submit your enquiry. Please try again.");
+          setServerError(msgs || json.message || "We could not submit your application. Please try again.");
+        } else setServerError(json.message || "We could not submit your application. Please try again.");
         return;
       }
       setSuccess({ enquiryNumber: json.enquiryNumber });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
-      setServerError("We could not submit your enquiry. Please try again.");
+      setServerError("We could not submit your application. Please try again.");
     }
   }
 
   if (success) {
     return (
       <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-success text-white flex items-center justify-center text-xl">✓</div>
-        <h3 className="mt-4 text-xl font-bold text-green-900">Thank you for enquiring about admission to our school!</h3>
-        <p className="mt-2 text-sm text-green-800">Your enquiry has been submitted successfully. Please keep your enquiry reference number for future communication. Our school team will contact you soon.</p>
+        <div className="flex justify-center">
+          <ModernIcon name="circleCheck" color="green" variant="solid" size="lg" shape="circle" />
+        </div>
+        <h3 className="mt-4 text-xl font-bold text-green-900">Thank you for applying to our school!</h3>
+        <p className="mt-2 text-sm text-green-800">Your application has been submitted successfully. Please keep your reference number for future communication. Our school team will contact you soon.</p>
         <p className="mt-4 inline-block bg-white border border-green-200 rounded-xl px-6 py-3 font-mono font-bold text-primary text-lg">{success.enquiryNumber}</p>
         <div className="mt-6 flex gap-3 justify-center">
           <Link href="/" className="text-sm font-semibold text-primary underline">Back to Home</Link>
-          <button onClick={()=>setSuccess(null)} className="text-sm font-semibold text-primary underline">Submit another enquiry</button>
+          <button onClick={()=>setSuccess(null)} className="text-sm font-semibold text-primary underline">Submit another application</button>
         </div>
       </div>
     );
@@ -82,7 +86,13 @@ export function AdmissionEnquiryForm() {
         </div>
         <div>
           <Label required htmlFor="contactNumber">Parent/Guardian Contact Number</Label>
-          <Input id="contactNumber" type="tel" placeholder="Enter contact number" autoComplete="tel" error={errors.contactNumber?.message} {...register("contactNumber")} />
+          <MobileInput
+            id="contactNumber"
+            placeholder="10-digit mobile number"
+            error={errors.contactNumber?.message}
+            {...mobileRegisterProps(register("contactNumber"))}
+          />
+          <p id="contactNumber-hint" className="text-xs text-text-muted mt-1">Enter the 10-digit number without +91.</p>
           <FieldError>{errors.contactNumber?.message}</FieldError>
         </div>
         <div>
@@ -97,8 +107,9 @@ export function AdmissionEnquiryForm() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-xs text-text-muted">
-        We collect only the information needed for your admission enquiry and use it solely to contact you about admission. Enquiry data is accessible only to authorized school staff. <Link href="/contact" className="text-secondary underline">Contact us</Link> for any privacy questions.
+      <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-xs text-text-muted flex items-start gap-3">
+        <ModernIcon name="shield" color="green" size="sm" shape="rounded" />
+        <span>We collect only the information needed for your admission application and use it solely to contact you about admission. Application data is accessible only to authorized school staff. <Link href="/contact" className="text-secondary underline">Contact us</Link> for any privacy questions.</span>
       </div>
       <label className="mt-3 flex items-start gap-2 text-sm">
         <input type="checkbox" className="mt-1" {...register("consent")} />
@@ -107,9 +118,8 @@ export function AdmissionEnquiryForm() {
       <FieldError>{(errors.consent as {message?:string})?.message}</FieldError>
 
       <Button type="submit" disabled={isSubmitting} className="mt-6 w-full">
-        {isSubmitting ? "Submitting…" : "Submit Enquiry"}
+        {isSubmitting ? "Submitting…" : "Submit Application"}
       </Button>
-      <p className="text-center text-xs text-text-muted mt-2">Need help? <Link href="/contact" className="text-secondary underline">Contact Us</Link></p>
     </form>
   );
 }

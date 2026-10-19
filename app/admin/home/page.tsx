@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
+import { imageSrc } from "@/lib/image-url";
 
 const DEFAULTS = {
   heroTitle: "Building Bright Futures Through Quality Education",
   heroSubtitle: "Discover a learning environment where knowledge, creativity, discipline, and character development come together to help every student grow.",
-  welcomeTitle: "Welcome to Sunrise Public School",
+  welcomeTitle: "Welcome to Our School",
   welcomeText: "We are committed to providing quality education that nurtures curiosity, confidence and character. Placeholder — replace with real school information.",
   ctaTitle: "Give Your Child a Strong Foundation for the Future",
-  ctaSubtitle: "Admissions are open. Enquire today and our team will guide you through the next steps.",
+  ctaSubtitle: "Admissions are open. Apply today and our team will guide you through the next steps.",
   heroImageUrl: "",
   welcomeImageUrl: "",
 };
@@ -47,7 +48,7 @@ export default function AdminHomePage(){
         <div><label className="text-sm font-medium">Hero Subtitle <span className="text-error">*</span></label><textarea value={form.heroSubtitle} onChange={e=>setForm({...form,heroSubtitle:e.target.value})} rows={3} className="mt-1 w-full rounded-xl border px-3 py-2.5 text-sm" required /></div>
         <div>
           <label className="text-sm font-medium">Hero Image <span className="text-text-muted font-normal">(optional)</span></label>
-          {form.heroImageUrl && <img src={form.heroImageUrl} alt="Hero" className="mt-2 h-32 rounded-xl object-cover border" />}
+          {form.heroImageUrl && <img src={imageSrc(form.heroImageUrl)} alt="Hero" className="mt-2 h-32 rounded-xl object-cover border" />}
           <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files?.[0]; if(f) upload(f,"heroImageUrl"); }} className="mt-2 w-full text-sm" />
           <input value={form.heroImageUrl} onChange={e=>setForm({...form,heroImageUrl:e.target.value})} placeholder="Or paste image URL" className="mt-2 w-full rounded-xl border px-3 py-2 text-sm" />
         </div>
@@ -55,7 +56,7 @@ export default function AdminHomePage(){
         <div><label className="text-sm font-medium">Welcome Text <span className="text-error">*</span></label><textarea value={form.welcomeText} onChange={e=>setForm({...form,welcomeText:e.target.value})} rows={4} className="mt-1 w-full rounded-xl border px-3 py-2.5 text-sm" required /></div>
         <div>
           <label className="text-sm font-medium">Welcome Image <span className="text-text-muted font-normal">(optional)</span></label>
-          {form.welcomeImageUrl && <img src={form.welcomeImageUrl} alt="Welcome" className="mt-2 h-32 rounded-xl object-cover border" />}
+          {form.welcomeImageUrl && <img src={imageSrc(form.welcomeImageUrl)} alt="Welcome" className="mt-2 h-32 rounded-xl object-cover border" />}
           <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files?.[0]; if(f) upload(f,"welcomeImageUrl"); }} className="mt-2 w-full text-sm" />
           <input value={form.welcomeImageUrl} onChange={e=>setForm({...form,welcomeImageUrl:e.target.value})} placeholder="Or paste image URL" className="mt-2 w-full rounded-xl border px-3 py-2 text-sm" />
         </div>

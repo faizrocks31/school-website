@@ -6,5 +6,10 @@ node_modules
 dev.log
 dev.db
 dev.db-journal
-public/uploads/*
-!public/uploads/.gitkeep
+tsconfig.tsbuildinfo
+# Uploaded images ARE tracked. The site deploys from GitHub, so anything not
+# committed is missing in production; uploading locally writes a file here and it
+# must be committed and pushed for the live site to serve it.
+
+.vercel
+.env*

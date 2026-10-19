@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { imageSrc } from "@/lib/image-url";
 type Item = { id:string; title:string; description:string; category:string; dateLabel:string; imageUrl:string|null };
 export default function AdminAchievementsPage(){
   const [items,setItems]=useState<Item[]>([]); const [loading,setLoading]=useState(true); const [msg,setMsg]=useState("");
@@ -36,7 +37,7 @@ export default function AdminAchievementsPage(){
           </select>
           <input value={form.dateLabel} onChange={e=>setForm({...form,dateLabel:e.target.value})} placeholder="Date / Session (e.g. 2024-25)" className="rounded-xl border px-3 py-2.5 text-sm" />
         </div>
-        {form.imageUrl && <img src={form.imageUrl} alt="" className="h-28 rounded-xl object-cover border" />}
+        {form.imageUrl && <img src={imageSrc(form.imageUrl)} alt="" className="h-28 rounded-xl object-cover border" />}
         <input type="file" accept="image/*" onChange={e=>{const f=e.target.files?.[0]; if(f) upload(f);}} className="text-sm" />
         <input value={form.imageUrl} onChange={e=>setForm({...form,imageUrl:e.target.value})} placeholder="Or paste image URL" className="rounded-xl border px-3 py-2 text-sm" />
         <div className="flex gap-2">
@@ -48,7 +49,7 @@ export default function AdminAchievementsPage(){
         {items.length===0 && <p className="text-sm text-text-muted bg-white border rounded-2xl p-6 text-center">No achievements yet.</p>}
         {items.map(it=>(
           <div key={it.id} className="bg-white rounded-2xl border p-4 flex gap-4">
-            {it.imageUrl && <img src={it.imageUrl} alt="" className="w-20 h-20 rounded-xl object-cover border flex-shrink-0" />}
+            {it.imageUrl && <img src={imageSrc(it.imageUrl)} alt="" className="w-20 h-20 rounded-xl object-cover border flex-shrink-0" />}
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm">{it.title} <span className="text-xs bg-slate-100 px-2 py-0.5 rounded-full">{it.category}</span></p>
               <p className="text-sm text-text-muted mt-1 line-clamp-2">{it.description}</p>

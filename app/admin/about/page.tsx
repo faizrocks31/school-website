@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { imageSrc } from "@/lib/image-url";
 
 const DEFAULTS = {
   introTitle: "About Our School",
@@ -106,7 +107,7 @@ export default function AdminAboutPage(){
         <div><label className="text-sm font-medium">Principal Message <span className="text-text-muted font-normal">(optional)</span></label><textarea value={form.principalMessage} onChange={e=>setForm({...form,principalMessage:e.target.value})} rows={3} className="mt-1 w-full rounded-xl border px-3 py-2.5 text-sm" /></div>
         <div>
           <label className="text-sm font-medium">Principal Photo <span className="text-text-muted font-normal">(optional)</span></label>
-          {form.principalImageUrl && <img src={form.principalImageUrl} alt="Principal" className="mt-2 h-28 rounded-xl object-cover border" />}
+          {form.principalImageUrl && <img src={imageSrc(form.principalImageUrl)} alt="Principal" className="mt-2 h-28 rounded-xl object-cover border" />}
           <input type="file" accept="image/*" onChange={e=>{const f=e.target.files?.[0]; if(f) upload(f);}} className="mt-2 w-full text-sm" />
           <input value={form.principalImageUrl} onChange={e=>setForm({...form,principalImageUrl:e.target.value})} placeholder="Or paste image URL" className="mt-2 w-full rounded-xl border px-3 py-2 text-sm" />
         </div>

@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
+import { normalizeMapEmbed } from "@/lib/map";
+import { imageSrc } from "@/lib/image-url";
 
 export default function AdminSitePage(){
-  const [form,setForm]=useState({ schoolName:"", tagline:"", logoUrl:"", address:"", phone:"", email:"", hours:"", facebook:"", instagram:"", youtube:""});
+  const [form,setForm]=useState({ schoolName:"", tagline:"", logoUrl:"", address:"", mapEmbedUrl:"", phone:"", email:"", hours:"", facebook:"", instagram:"", youtube:""});
   const [msg,setMsg]=useState(""); const [details,setDetails]=useState(""); const [loading,setLoading]=useState(true); const [saving,setSaving]=useState(false); const [uploading,setUploading]=useState(false);
   const [logoBroken,setLogoBroken]=useState(false);
 
-  useEffect(()=>{ fetch("/api/admin/site-settings").then(r=>r.json()).then(j=>{ if(j.schoolName) setForm(f=>({...f, ...j, logoUrl: j.logoUrl ?? ""})); setLoading(false);}).catch(()=>setLoading(false)); },[]);
+  useEffect(()=>{ fetch("/api/admin/site-settings").then(r=>r.json()).then(j=>{ if(j.schoolName) setForm(f=>({...f, ...j, logoUrl: j.logoUrl ?? "", mapEmbedUrl: j.mapEmbedUrl ?? ""})); setLoading(false);}).catch(()=>setLoading(false)); },[]);
 
   async function uploadLogo(file: File){
     setUploading(true); setMsg(""); setDetails("");
@@ -35,6 +37,8 @@ export default function AdminSitePage(){
 
   if(loading) return <p className="text-sm text-text-muted">Loading…</p>;
 
+  const previewMap = normalizeMapEmbed(form.mapEmbedUrl);
+
   const field = (label:string, key: keyof typeof form, type="text")=>(
     <div key={key}>
       <label className="text-sm font-medium">{label}</label>
@@ -53,7 +57,7 @@ export default function AdminSitePage(){
           <div className="mt-2 flex items-center gap-4">
             {form.logoUrl && !logoBroken ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={form.logoUrl} alt="Logo preview" onError={()=>setLogoBroken(true)} className="h-20 w-20 rounded-2xl object-contain border border-slate-200 p-1 bg-white flex-shrink-0" />
+              <img src={imageSrc(form.logoUrl)} alt="Logo preview" onError={()=>setLogoBroken(true)} className="h-20 w-20 rounded-2xl object-contain border border-slate-200 p-1 bg-white flex-shrink-0" />
             ) : (
               <div className="h-20 w-20 rounded-2xl border border-dashed border-slate-300 flex items-center justify-center text-xs text-text-muted text-center flex-shrink-0 px-1">No logo</div>
             )}
@@ -73,12 +77,44 @@ export default function AdminSitePage(){
         </div>
         {field("Tagline","tagline")}
         {field("Address","address")}
+        <div>
+          <label className="text-sm font-medium">Location Map <span className="text-text-muted font-normal">(optional)</span></label>
+          <textarea
+            value={form.mapEmbedUrl}
+            onChange={e=>setForm({...form,mapEmbedUrl:e.target.value})}
+            rows={3}
+            placeholder='Paste the Google Maps embed URL, or the whole <iframe ...> snippet'
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono outline-none focus:ring-2 focus:ring-secondary/30"
+          />
+          <p className="text-xs text-text-muted mt-1">
+            Google Maps → search your school → <strong>Share</strong> → <strong>Embed a map</strong> → copy. Shown on the Contact Us page.
+          </p>
+          {previewMap ? (
+            <div className="mt-2 rounded-xl overflow-hidden border border-slate-200">
+              <iframe src={previewMap} title="Location map preview" width="100%" height="200" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            </div>
+          ) : form.mapEmbedUrl.trim() ? (
+            <p className="text-xs text-error mt-2">That doesn&apos;t look like a Google Maps embed link — the map won&apos;t show. Use Share → Embed a map.</p>
+          ) : null}
+        </div>
         {field("Phone","phone","tel")}
         {field("Email","email","email")}
         {field("Office Hours","hours")}
-        {field("Facebook URL","facebook","url")}
-        {field("Instagram URL","instagram","url")}
-        {field("YouTube URL","youtube","url")}
+
+        <div className="border-t border-slate-200 pt-4">
+          <p className="text-sm font-semibold text-text-main">Social Media</p>
+          <p className="text-xs text-text-muted mt-0.5">
+            Shown as a <strong>Follow us</strong> row of icons in the website footer. Paste the full
+            link to your page, e.g. <span className="font-mono">https://facebook.com/yourschool</span>.
+            Leave a box empty to hide that icon.
+          </p>
+          <div className="mt-3 grid gap-4">
+            {field("Facebook URL","facebook","url")}
+            {field("Instagram URL","instagram","url")}
+            {field("YouTube URL","youtube","url")}
+          </div>
+        </div>
+
         <button type="submit" disabled={saving||uploading} className="bg-primary text-white rounded-xl py-2.5 text-sm font-semibold disabled:opacity-50">{saving?"Saving…":"Save Changes"}</button>
       </form>
     </div>

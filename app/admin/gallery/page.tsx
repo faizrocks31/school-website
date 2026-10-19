@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { imageSrc } from "@/lib/image-url";
 type Img = { id:string; url:string; alt:string };
 export default function AdminGalleryPage(){
   const [items,setItems]=useState<Img[]>([]); const [loading,setLoading]=useState(true); const [msg,setMsg]=useState(""); const [alt,setAlt]=useState("");
@@ -38,7 +39,7 @@ export default function AdminGalleryPage(){
         <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
           {items.map(it=>(
             <div key={it.id} className="bg-white rounded-2xl border overflow-hidden">
-              <img src={it.url} alt={it.alt} className="w-full h-32 object-cover" />
+              <img src={imageSrc(it.url)} alt={it.alt} className="w-full h-32 object-cover" />
               <div className="p-2 flex items-center justify-between gap-1">
                 <p className="text-xs text-text-muted truncate">{it.alt || "Photo"}</p>
                 <button onClick={()=>del(it.id)} className="text-xs text-error underline">Delete</button>

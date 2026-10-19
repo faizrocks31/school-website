@@ -1,13 +1,22 @@
+/**
+ * Fallback content used only when the database is unreachable or not yet
+ * migrated. The database is the real source of truth — the school name,
+ * tagline, contact details and theme are all managed in Admin → Site Settings.
+ *
+ * Keep these values obviously generic: if this fallback ever reaches a visitor,
+ * it must not look like real school information.
+ */
 export const siteConfig = {
-  name: "Sunrise Public School",
+  name: "Your School Name",
   tagline: "Empowering Young Minds for a Brighter Tomorrow",
   description: "A modern school website — placeholder content until real school information is supplied.",
   logoUrl: "",
+  mapEmbedUrl: "",
   contact: {
-    address: "123 Education Lane, Knowledge City, State — PIN 110001",
-    phone: "+91 98765 43210",
-    email: "info@sunrisepublicschool.example.com",
-    hours: "Mon – Sat: 8:00 AM – 2:00 PM",
+    address: "School address — set this in Admin → Site Settings",
+    phone: "+91 00000 00000",
+    email: "info@example.com",
+    hours: "Office hours — set this in Admin → Site Settings",
   },
   social: { facebook: "", instagram: "", youtube: "" },
 };
@@ -27,4 +36,12 @@ export const AGE_RANGE = { min: 3, max: 18 } as const;
 export const ENQUIRY_LIMITS = {
   maxPerPhone: 3,
   maxPerEmail: 3,
+} as const;
+
+/**
+ * Maximum "Leave a Message" submissions allowed per mobile number.
+ * Set to 2 means the 3rd message from the same number is rejected with 409.
+ */
+export const MESSAGE_LIMITS = {
+  maxPerPhone: 2,
 } as const;

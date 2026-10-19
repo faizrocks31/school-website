@@ -1,6 +1,6 @@
 # Free Hosting + Free Domain — Deploy Guide
 
-> **Sunrise Public School** — Next.js 14 on Vercel (free `vercel.app` domain)
+> **School Website** — Next.js 14 on Vercel (free `vercel.app` domain)
 
 ## Live now
 
@@ -115,6 +115,38 @@ fetch("/api/v1/admission-enquiries",{method:"POST",headers:{"Content-Type":"appl
 ### Auto-updates
 Every `git push` to `main` auto-redeploys. Edit content via `/admin` on the live site — no redeploy needed for content changes!
 
+> **Important — the project must be Git-connected for this to be true.** Check with
+> `npx vercel project inspect school-website-4vyz`; if no repository is listed, run
+> `npx vercel git connect https://github.com/faizrocks31/school-website.git` once.
+> Until then, `git push` alone does NOT deploy anything — only `npx vercel deploy --prod` does.
+
+---
+
+## Images — how uploads reach the live site
+
+Uploaded images live in **two places depending on where you upload them**, and the
+database always stores the same relative path (`/uploads/<name>`) so neither
+environment has to know about the other.
+
+| Where you upload | Where the file goes | How it is served |
+|---|---|---|
+| **Your PC** (local dev) | `public/uploads/` on disk | `/api/uploads/<name>` reads the file off disk |
+| **The live site** (`/admin`) | Vercel Blob | `/api/uploads/<name>` redirects to the Blob object, falling back to the committed copy |
+
+**To put an image on the live site from your PC**, upload it locally, then commit and push:
+
+```powershell
+git add public/uploads/<file>
+git commit -m "add image"
+git push
+```
+
+`public/uploads/` is deliberately **not** gitignored — a deploy from GitHub only
+carries what is committed, so an uncommitted image would 404 in production.
+
+**Do not** upload through `/admin` on the live site and then expect the file in the
+repo — that goes to Blob, which is correct and works, but it is a different copy.
+
 ---
 
 ## Option B — Netlify (Alternative)
@@ -166,6 +198,8 @@ ADMIN_TOKEN="your-strong-password"
 | `P1012: URL must start with postgresql://` | `.env` reverted to `file:./dev.db` — replace with the Postgres URL |
 | Build fails: `EPERM query_engine` | Local only — `taskkill /F /IM node.exe; Remove-Item -Recurse -Force node_modules\.prisma; npx prisma generate` |
 | `ADMIN_TOKEN` not working | Set it in Vercel → Settings → Environment Variables → Redeploy |
+| Live image 404s (`/uploads/...`) | The file was never committed. `git add public/uploads/<file>` and push — or upload it via `/admin` on the live site, which stores it in Blob |
+| "Image storage is not configured" on upload | No Blob store linked to the project. Vercel Dashboard → Storage → connect a Blob store, then redeploy |
 | Test rows appear on the live site | Dev and prod share one database — delete test enquiries from `/admin/enquiries` |
 
 ---
